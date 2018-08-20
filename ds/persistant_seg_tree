@@ -1,0 +1,166 @@
+import java.io.*;
+import java.util.*;
+import java.math.*;
+import java.util.concurrent.*;
+
+public final class persistant_segment_tree
+{
+    static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+	static FastScanner sc=new FastScanner(br);
+    static PrintWriter out=new PrintWriter(System.out);
+	static Random rnd=new Random();
+	static int size=(int)(1e7);
+	static int[] left,right,tree;
+	static int nodes=0;
+	
+	static void build(int node,int s,int e)
+	{
+		nodes=Math.max(nodes,node);
+		
+		if(s==e)
+		{
+			tree[node]=0;
+		}
+		
+		else
+		{
+			int mid=(s+e)>>1;
+			
+			build(node<<1,s,mid);build(node<<1|1,mid+1,e);
+			
+			left[node]=node<<1;right[node]=node<<1|1;
+			
+			tree[node]=tree[left[node]]+tree[right[node]];
+		}
+	}
+	
+	static int insert(int prev,int idx,int s,int e,int val)
+	{
+		if(s==e)
+		{
+			++nodes;int now=nodes;
+			
+			tree[now]=tree[prev]+val;
+			
+			return now;
+		}
+		
+		else
+		{
+			int mid=(s+e)>>1;
+			
+			if(idx<=mid)
+			{
+				++nodes;int now=nodes;
+				
+				right[now]=right[prev];
+				
+				left[now]=insert(left[prev],idx,s,mid,val);
+				
+				tree[now]=tree[left[now]]+tree[right[now]];
+				
+				return now;
+			}	
+			
+			else
+			{
+				++nodes;int now=nodes;
+				
+				left[now]=left[prev];
+				
+				right[now]=insert(right[prev],idx,mid+1,e,val);
+				
+				tree[now]=tree[left[now]]+tree[right[now]];
+				
+				return now;
+			}
+		}
+	}
+	
+	static int query(int node,int s,int e,int l,int r)
+	{
+		if(s>e || l>e || r<s)
+		{
+			return 0;
+		}
+		
+		if(l<=s && r>=e)
+		{
+			return tree[node];
+		}
+		
+		else
+		{
+			int mid=(s+e)>>1;
+			
+			int val1=query(left[node],s,mid,l,r),val2=query(right[node],mid+1,e,l,r);
+			
+			return (val1+val2);
+		}
+	}
+	
+	static int get_k(int node1,int node2,int s,int e,int k)
+	{
+		if(s==e)
+		{
+			return s;
+		}
+		
+		else
+		{
+			int mid=(s+e)>>1;
+			
+			int val=tree[left[node1]]-tree[left[node2]];
+			
+			if(val<=k)
+			{
+				return get_k(node1,node2,s,mid,k);
+			}
+			
+			else
+			{
+				return get_k(node1,node2,mid+1,e,k-val);
+			}
+		}
+	}
+	
+	
+    public static void main(String args[]) throws Exception
+    {
+		// persistant segment tree, where the ith segment tree is segment tree of values over the range 0...maxn for the first i elements...
+		
+		
+    }
+}
+class FastScanner
+{
+    BufferedReader in;
+    StringTokenizer st;
+
+    public FastScanner(BufferedReader in) {
+        this.in = in;
+    }
+	
+    public String nextToken() throws Exception {
+        while (st == null || !st.hasMoreTokens()) {
+            st = new StringTokenizer(in.readLine());
+        }
+        return st.nextToken();
+    }
+	
+	public String next() throws Exception {
+		return nextToken().toString();
+	}
+	
+    public int nextInt() throws Exception {
+        return Integer.parseInt(nextToken());
+    }
+
+    public long nextLong() throws Exception {
+        return Long.parseLong(nextToken());
+    }
+
+    public double nextDouble() throws Exception {
+        return Double.parseDouble(nextToken());
+    }
+}
