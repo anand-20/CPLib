@@ -3,7 +3,7 @@ import java.util.*;
 import java.math.*;
 import java.util.concurrent.*;
 
-public final class binary_indexed_tree
+public final class binary_indexed_tree_1
 {
     static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
 	static FastScanner sc=new FastScanner(br);
